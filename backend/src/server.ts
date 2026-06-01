@@ -4,25 +4,60 @@ import cors from "cors";
 import multer from "multer";
 import { runVisualRegressionChain } from "./chain";
 
-
 // 1. Express setup 
 const app = express();
 const PORT = process.env.PORT ?? 5000;
+const SUPPORTED_CODE_FILE_PATTERN =
+  /\.(css|scss|sass|html|js|jsx|ts|tsx|vue|svelte)$/i;
+const IGNORED_PATH_SEGMENTS = new Set([
+  ".git",
+  ".next",
+  "build",
+  "coverage",
+  "dist",
+  "node_modules",
+  "out",
+]);
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    files: 2,
+    files: 301,
     fileSize: 10 * 1024 * 1024,
   },
+  preservePath: true,
 });
 
 app.use(cors());
 app.use(express.json());
 
+function shouldIncludeCodeFile(fileName: string) {
+  const normalizedName = fileName.replace(/\\/g, "/");
+  const pathSegments = normalizedName.split("/");
+
+  return (
+    SUPPORTED_CODE_FILE_PATTERN.test(normalizedName) &&
+    !pathSegments.some((segment) => IGNORED_PATH_SEGMENTS.has(segment))
+  );
+}
+
+function buildCodeSnapshot(codeFiles: Express.Multer.File[]) {
+  return codeFiles
+    .filter((file) => shouldIncludeCodeFile(file.originalname))
+    .sort((firstFile, secondFile) =>
+      firstFile.originalname.localeCompare(secondFile.originalname)
+    )
+    .map((file) => {
+      const code = file.buffer.toString("utf8");
+      return `File: ${file.originalname}\n\`\`\`\n${code}\n\`\`\``;
+    })
+    .join("\n\n");
+}
+
 app.post(
   "/api/analyze",
   upload.fields([
-    { name: "codeFile", maxCount: 1 },
+    { name: "codeFiles", maxCount: 300 },
     { name: "screenshot", maxCount: 1 },
   ]),
   async (req: Request, res: Response) => {
@@ -30,12 +65,12 @@ app.post(
       const files = req.files as
         | Record<string, Express.Multer.File[]>
         | undefined;
-      const codeFile = files?.codeFile?.[0];
+      const codeFiles = files?.codeFiles ?? [];
       const screenshot = files?.screenshot?.[0];
 
-      if (!codeFile || !screenshot) {
+      if (codeFiles.length === 0 || !screenshot) {
         return res.status(400).json({
-          error: "Both codeFile and screenshot uploads are required.",
+          error: "Both codeFiles and screenshot uploads are required.",
         });
       }
 
@@ -45,12 +80,19 @@ app.post(
         });
       }
 
-      const codeString = codeFile.buffer.toString("utf8");
+      const codeString = buildCodeSnapshot(codeFiles);
+
+      if (!codeString) {
+        return res.status(400).json({
+          error: "The uploaded folder does not contain supported source files.",
+        });
+      }
+
       const base64Image = screenshot.buffer.toString("base64");
 
       const result = await runVisualRegressionChain(
         codeString,
-        codeFile.originalname,
+        "uploaded-folder",
         base64Image,
         screenshot.mimetype
       );
@@ -65,7 +107,7 @@ app.post(
   }
 );
 
-// ── 6. Start server ───────────────────────────────────────────────────────────
+// 6. Start server 
 app.listen(PORT, () => {
   console.log(`✅ Visual Regression Agent running on http://localhost:${PORT}`);
 });
