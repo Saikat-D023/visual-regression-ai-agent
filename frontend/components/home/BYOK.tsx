@@ -8,7 +8,7 @@ export function BYOK() {
   ];
 
   return (
-    <section className="py-32 px-6 w-full max-w-6xl mx-auto overflow-hidden bg-brand-bg transition-colors duration-500">
+    <section id="byok" className="py-32 px-6 w-full max-w-6xl mx-auto overflow-hidden bg-brand-bg transition-colors duration-500">
       
       <div className="flex flex-col lg:flex-row items-center gap-16">
         

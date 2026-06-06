@@ -14,8 +14,9 @@ export function TuiPreview() {
   }, []);
 
   return (
-    <section id="tui" className="mx-auto w-full max-w-6xl px-6 py-24 scroll-mt-20 bg-brand-bg transition-colors duration-500">
-      <div className="flex flex-col md:flex-row gap-12 items-center">
+    <section id="tui" className="py-24 px-6 w-full bg-brand-bg transition-colors duration-500 overflow-hidden">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-12 items-center">
         {/* Descriptive Column */}
         <div className="w-full md:w-1/2 space-y-6 text-left">
           <div className="inline-block bg-brand-accent/10 text-brand-accent border border-brand-accent/20 font-mono text-[10px] font-bold py-1.5 px-3.5 rounded-full uppercase">
@@ -124,6 +125,7 @@ export function TuiPreview() {
 
           </div>
         </div>
+      </div>
       </div>
     </section>
   );

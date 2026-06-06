@@ -39,7 +39,7 @@ export function HowItWorks() {
   }, []);
 
   return (
-    <section ref={containerRef} className="py-24 px-6 w-full max-w-6xl mx-auto overflow-hidden">
+    <section id="protocol" ref={containerRef} className="py-24 px-6 w-full max-w-6xl mx-auto overflow-hidden">
       <div className="text-center mb-20">
         <h2 className="text-4xl md:text-5xl font-bold font-sans tracking-tight text-brand-dark mb-4">
           Visual debugging on autopilot
