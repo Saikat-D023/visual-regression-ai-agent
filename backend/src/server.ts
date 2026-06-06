@@ -17,6 +17,7 @@ const IGNORED_PATH_SEGMENTS = new Set([
   "dist",
   "node_modules",
   "out",
+  ".gitignore"
 ]);
 
 const upload = multer({

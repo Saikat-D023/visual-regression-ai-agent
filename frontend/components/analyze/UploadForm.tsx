@@ -1,8 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
-import { FileInput } from "@/components/ui/FileInput";
-import { Panel } from "@/components/ui/Panel";
+import { ChangeEvent } from "react";
+import { FolderOpen, Image as ImageIcon, Play, AlertTriangle } from "lucide-react";
 import { ScreenshotPreview } from "./ScreenshotPreview";
 
 type UploadFormProps = {
@@ -15,6 +14,11 @@ type UploadFormProps = {
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
+const directoryInputProps = {
+  directory: "",
+  webkitdirectory: "",
+} as Record<string, string>;
+
 export function UploadForm({
   codeFiles,
   error,
@@ -24,32 +28,117 @@ export function UploadForm({
   onScreenshotChange,
   onSubmit,
 }: UploadFormProps) {
+  function handleFolderChange(event: ChangeEvent<HTMLInputElement>) {
+    onCodeFilesChange(Array.from(event.target.files ?? []));
+  }
+  
+  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    onScreenshotChange(files[0] ?? null);
+  }
+
   return (
-    <Panel title="Input">
-      <form className="space-y-5" onSubmit={onSubmit}>
-        <FileInput
-          folder
-          label="Source folder"
-          accept=".css,.scss,.html,.js,.jsx,.ts,.tsx,.vue,.svelte"
-          meta={codeFiles.length ? `${codeFiles.length} files selected` : ""}
-          onFilesChange={onCodeFilesChange}
-        />
-        <FileInput
-          label="Screenshot"
-          accept="image/*"
-          meta={screenshot?.name}
-          preview={<ScreenshotPreview screenshot={screenshot} />}
-          onFilesChange={(files) => onScreenshotChange(files[0] ?? null)}
-        />
-        {error ? <p className="error-box">{error}</p> : null}
-        <Button
-          type="submit"
-          disabled={isAnalyzing || codeFiles.length === 0 || !screenshot}
-          className="w-full"
-        >
-          {isAnalyzing ? "Analyzing..." : "Run analysis"}
-        </Button>
+    <div className="flex flex-col border border-[#333] rounded-xl bg-[#0A0C10] shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden h-full">
+      <div className="bg-[#18181C] px-4 py-3 flex items-center justify-between border-b border-[#333] select-none">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-[#E63B2E]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#F5C211]"></div>
+          <div className="w-3 h-3 rounded-full bg-[#4CD964]"></div>
+        </div>
+        <div className="text-[10px] text-[#888] font-bold uppercase tracking-wider">Input_Parameters.sh</div>
+        <div className="w-12"></div>
+      </div>
+      
+      <form className="flex-1 flex flex-col p-6 space-y-8" onSubmit={onSubmit}>
+        <div className="space-y-6 flex-1">
+          {/* Source folder input */}
+          <div className="space-y-3">
+            <label className="text-[11px] text-[#888] uppercase tracking-wider font-bold block">
+              <span className="text-brand-accent mr-2">❯</span> Mount Source Code
+            </label>
+            <label className="flex items-center gap-4 p-4 rounded-lg border border-dashed border-[#444] bg-[#111] hover:bg-[#151515] hover:border-brand-accent/50 cursor-pointer transition-all group">
+              <div className="bg-[#222] group-hover:bg-brand-accent/20 p-2.5 rounded-md text-[#888] group-hover:text-brand-accent transition-colors">
+                <FolderOpen size={20} />
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <div className="text-sm text-[#DDD] font-medium group-hover:text-white transition-colors">Select project folder</div>
+                <div className="text-xs text-[#666] truncate mt-1 font-mono">
+                  {codeFiles.length ? <span className="text-emerald-500">Loaded {codeFiles.length} files into memory</span> : "Awaiting directory mount..."}
+                </div>
+              </div>
+              <input
+                type="file"
+                accept=".css,.scss,.html,.js,.jsx,.ts,.tsx,.vue,.svelte"
+                multiple
+                onChange={handleFolderChange}
+                className="hidden"
+                {...directoryInputProps}
+              />
+            </label>
+          </div>
+
+          {/* Screenshot input */}
+          <div className="space-y-3">
+            <label className="text-[11px] text-[#888] uppercase tracking-wider font-bold block">
+              <span className="text-brand-accent mr-2">❯</span> Target State (Screenshot)
+            </label>
+            <label className="flex flex-col gap-4 p-4 rounded-lg border border-dashed border-[#444] bg-[#111] hover:bg-[#151515] hover:border-brand-accent/50 cursor-pointer transition-all group relative overflow-hidden">
+              <div className="flex items-center gap-4 z-10 relative">
+                <div className="bg-[#222] group-hover:bg-brand-accent/20 p-2.5 rounded-md text-[#888] group-hover:text-brand-accent transition-colors">
+                  <ImageIcon size={20} />
+                </div>
+                <div className="flex-1 overflow-hidden">
+                  <div className="text-sm text-[#DDD] font-medium group-hover:text-white transition-colors">Upload visual target</div>
+                  <div className="text-xs text-[#666] truncate mt-1 font-mono">
+                    {screenshot ? <span className="text-emerald-500">{screenshot.name}</span> : "Awaiting image buffer..."}
+                  </div>
+                </div>
+              </div>
+              
+              {screenshot && (
+                <div className="mt-2 rounded-md overflow-hidden border border-[#333] bg-[#000] relative z-10">
+                  <ScreenshotPreview screenshot={screenshot} />
+                </div>
+              )}
+              
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Error and Submit */}
+        <div className="space-y-4 pt-4 border-t border-[#222]">
+          {error && (
+            <div className="flex items-start gap-3 p-3 rounded-md bg-[#E63B2E]/10 border border-[#E63B2E]/30 text-[#E63B2E] text-xs">
+              <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+              <p className="font-mono leading-relaxed">{error}</p>
+            </div>
+          )}
+          
+          <button
+            type="submit"
+            disabled={isAnalyzing || codeFiles.length === 0 || !screenshot}
+            className="w-full flex items-center justify-center gap-2 bg-brand-accent hover:bg-[#ff4d3f] disabled:bg-[#333] disabled:text-[#666] disabled:cursor-not-allowed text-white font-bold uppercase tracking-wider text-xs py-4 rounded-lg transition-all"
+          >
+            {isAnalyzing ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                Executing Analysis Sequence...
+              </>
+            ) : (
+              <>
+                <Play size={16} fill="currentColor" />
+                Initialize Protocol
+              </>
+            )}
+          </button>
+        </div>
       </form>
-    </Panel>
+    </div>
   );
 }

@@ -1,6 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Serif+Display:ital@0;1&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 @import "tailwindcss";
 
 :root {
+  --background: #F5F3EE;
+  --foreground: #111111;
+  --muted: #666666;
+  --panel: #E8E4DD;
+  --panel-soft: #EDEDE8;
+  --border: #D1CCC4;
+  --accent: #E63B2E;
+  --error: #E63B2E;
+}
+
+.dark {
   --background: #070910;
   --foreground: #f8fafc;
   --muted: #94a3b8;
@@ -14,9 +26,44 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Arial, Helvetica, sans-serif;
-  --font-mono: "Courier New", Courier, monospace;
+  --color-muted: var(--muted);
+  --color-panel: var(--panel);
+  --color-panel-soft: var(--panel-soft);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-error: var(--error);
+  
+  --color-brand-primary: var(--panel);
+  --color-brand-accent: var(--accent);
+  --color-brand-bg: var(--background);
+  --color-brand-dark: var(--foreground);
+  
+  --animate-marquee: marquee 25s linear infinite;
+
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-drama: 'DM Serif Display', serif;
+  --font-data: 'Space Mono', monospace;
+  
+  --font-sans: 'Space Grotesk', Arial, Helvetica, sans-serif;
+  --font-mono: 'Space Mono', "Courier New", Courier, monospace;
 }
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
 
 * {
   box-sizing: border-box;
@@ -24,15 +71,15 @@
 
 html {
   background: var(--background);
-  color-scheme: dark;
 }
 
 body {
   margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Space Grotesk', Arial, Helvetica, sans-serif;
 }
+
 
 button,
 input {
@@ -65,7 +112,7 @@ input {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: white;
+  filter: brightness(1.1);
 }
 
 .btn-secondary {
@@ -75,8 +122,8 @@ input {
 }
 
 .btn-secondary:hover:not(:disabled) {
-  border-color: #64748b;
-  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
 }
 
 .btn:disabled {
@@ -173,3 +220,27 @@ input {
   font-size: 0.85rem;
   line-height: 1.6;
 }
+
+.gradient-text {
+  background: linear-gradient(135deg, #60a5fa, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: inline-block;
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.2em;
+  background-color: #22d3ee;
+  vertical-align: middle;
+  margin-left: 4px;
+  animation: blink-cursor 1s step-end infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+

@@ -9,10 +9,14 @@ export function AnalyzeWorkbench() {
   const analysis = useVisualAnalysis();
 
   return (
-    <main className="app-shell">
-      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-5 py-6 sm:px-8">
+    <main className="min-h-screen bg-[#050505] text-[#E8E4DD] font-mono selection:bg-brand-accent selection:text-white">
+      {/* Background terminal grid effect */}
+      <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(to_right,#111111_1px,transparent_1px),linear-gradient(to_bottom,#111111_1px,transparent_1px)] bg-[size:2rem_2rem] opacity-20" />
+      
+      <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-8">
         <AnalyzeHeader />
-        <section className="grid gap-5 lg:grid-cols-[380px_minmax(0,1fr)]">
+        
+        <section className="grid gap-6 lg:grid-cols-[400px_minmax(0,1fr)] flex-1 pb-10">
           <UploadForm
             codeFiles={analysis.codeFiles}
             error={analysis.error}
@@ -30,7 +34,7 @@ export function AnalyzeWorkbench() {
             }}
             onSubmit={analysis.submit}
           />
-          <ResultPanel result={analysis.result} />
+          <ResultPanel result={analysis.result} isAnalyzing={analysis.isAnalyzing} />
         </section>
       </div>
     </main>
