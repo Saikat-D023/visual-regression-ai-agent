@@ -1,23 +1,27 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 type ScreenshotPreviewProps = {
   screenshot: File | null;
 };
 
 export function ScreenshotPreview({ screenshot }: ScreenshotPreviewProps) {
-  const previewUrl = useMemo(() => {
-    return screenshot ? URL.createObjectURL(screenshot) : "";
-  }, [screenshot]);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
 
   useEffect(() => {
+    if (!screenshot) {
+      setPreviewUrl("");
+      return;
+    }
+
+    const url = URL.createObjectURL(screenshot);
+    setPreviewUrl(url);
+
     return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
+      URL.revokeObjectURL(url);
     };
-  }, [previewUrl]);
+  }, [screenshot]);
 
   if (!previewUrl) {
     return <span className="file-placeholder">Choose file</span>;

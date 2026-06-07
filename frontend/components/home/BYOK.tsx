@@ -9,9 +9,9 @@ export function BYOK() {
 
   return (
     <section id="byok" className="py-32 px-6 w-full max-w-6xl mx-auto overflow-hidden bg-brand-bg transition-colors duration-500">
-      
+
       <div className="flex flex-col lg:flex-row items-center gap-16">
-        
+
         {/* Left Content */}
         <div className="w-full lg:w-1/2 space-y-8">
           <div>
@@ -31,7 +31,7 @@ export function BYOK() {
             {/* Fade Overlays */}
             <div className="absolute top-0 left-0 bottom-0 w-16 bg-gradient-to-r from-brand-bg to-transparent z-10"></div>
             <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-brand-bg to-transparent z-10"></div>
-            
+
             {/* Marquee Track */}
             <div className="flex w-max animate-marquee space-x-12 items-center">
               {[...providers, ...providers].map((provider, i) => (
@@ -47,7 +47,7 @@ export function BYOK() {
         <div className="w-full lg:w-1/2">
           <div className="relative p-1 rounded-2xl bg-gradient-to-br from-brand-border/50 to-transparent">
             <div className="bg-brand-primary rounded-xl p-8 shadow-[0_20px_40px_rgba(0,0,0,0.05)] border border-brand-border/30">
-              
+
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -66,6 +66,9 @@ export function BYOK() {
                       <option>Google (gemini-1.5-pro)</option>
                       <option>Nvidia (nemotron-4)</option>
                       <option>OpenRouter (auto)</option>
+                      <option>Deepseek</option>
+                      <option>Minimax</option>
+                      <option>X-ai Grok</option>
                     </select>
                   </div>
 
@@ -75,9 +78,9 @@ export function BYOK() {
                       <div className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-dark/40">
                         <Key size={16} />
                       </div>
-                      <input 
-                        type="password" 
-                        value="sk-proj-••••••••••••••••••••••••" 
+                      <input
+                        type="password"
+                        value="sk-proj-••••••••••••••••••••••••"
                         readOnly
                         className="w-full bg-brand-bg border border-brand-border rounded-lg pl-10 pr-10 py-3 text-sm text-brand-dark font-mono outline-none"
                       />
@@ -88,11 +91,11 @@ export function BYOK() {
                   </div>
                 </div>
 
-                <button className="w-full bg-brand-accent text-white font-bold py-3 rounded-lg hover:bg-brand-accent/90 transition-colors shadow-lg shadow-brand-accent/20">
+                <button className="w-full bg-[#E63B2E] text-white font-bold py-3 rounded-lg hover:bg-[#E63B2E]/90 transition-colors shadow-lg shadow-[#E63B2E]/20">
                   Save & Authenticate
                 </button>
               </div>
-              
+
             </div>
           </div>
         </div>
