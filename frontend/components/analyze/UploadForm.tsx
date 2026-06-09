@@ -3,15 +3,19 @@
 import { ChangeEvent } from "react";
 import { FolderOpen, Image as ImageIcon, Play, AlertTriangle } from "lucide-react";
 import { ScreenshotPreview } from "./ScreenshotPreview";
+import { TextVoiceInput } from "./TextVoiceInput";
 
 type UploadFormProps = {
   codeFiles: File[];
   error: string;
   isAnalyzing: boolean;
   screenshot: File | null;
+  textPrompt: string;
   onCodeFilesChange: (files: File[]) => void;
   onScreenshotChange: (file: File | null) => void;
+  onTextPromptChange: (value: string) => void;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onInteraction: () => boolean;
 };
 
 const directoryInputProps = {
@@ -24,17 +28,34 @@ export function UploadForm({
   error,
   isAnalyzing,
   screenshot,
+  textPrompt,
   onCodeFilesChange,
   onScreenshotChange,
+  onTextPromptChange,
   onSubmit,
+  onInteraction,
 }: UploadFormProps) {
   function handleFolderChange(event: ChangeEvent<HTMLInputElement>) {
+    if (!onInteraction()) {
+      event.preventDefault();
+      return;
+    }
     onCodeFilesChange(Array.from(event.target.files ?? []));
   }
   
   function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    if (!onInteraction()) {
+      event.preventDefault();
+      return;
+    }
     const files = Array.from(event.target.files ?? []);
     onScreenshotChange(files[0] ?? null);
+  }
+
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!onInteraction()) return;
+    onSubmit(event);
   }
 
   return (
@@ -49,7 +70,7 @@ export function UploadForm({
         <div className="w-12"></div>
       </div>
       
-      <form className="flex-1 flex flex-col p-6 space-y-8" onSubmit={onSubmit}>
+      <form className="flex-1 flex flex-col p-6 space-y-8 overflow-y-auto" onSubmit={handleSubmit}>
         <div className="space-y-6 flex-1">
           {/* Source folder input */}
           <div className="space-y-3">
@@ -81,6 +102,7 @@ export function UploadForm({
           <div className="space-y-3">
             <label className="text-[11px] text-[#888] uppercase tracking-wider font-bold block">
               <span className="text-brand-accent mr-2">❯</span> Target State (Screenshot)
+              <span className="text-[#555] ml-2 normal-case tracking-normal font-normal">(optional)</span>
             </label>
             <label className="flex flex-col gap-4 p-4 rounded-lg border border-dashed border-[#444] bg-[#111] hover:bg-[#151515] hover:border-brand-accent/50 cursor-pointer transition-all group relative overflow-hidden">
               <div className="flex items-center gap-4 z-10 relative">
@@ -109,6 +131,9 @@ export function UploadForm({
               />
             </label>
           </div>
+
+          {/* Text + Voice Input */}
+          <TextVoiceInput value={textPrompt} onChange={onTextPromptChange} />
         </div>
 
         {/* Error and Submit */}
@@ -122,7 +147,7 @@ export function UploadForm({
           
           <button
             type="submit"
-            disabled={isAnalyzing || codeFiles.length === 0 || !screenshot}
+            disabled={isAnalyzing || codeFiles.length === 0 || (!screenshot && !textPrompt.trim())}
             className="w-full flex items-center justify-center gap-2 bg-brand-accent hover:bg-[#ff4d3f] disabled:bg-[#333] disabled:text-[#666] disabled:cursor-not-allowed text-white font-bold uppercase tracking-wider text-xs py-4 rounded-lg transition-all"
           >
             {isAnalyzing ? (

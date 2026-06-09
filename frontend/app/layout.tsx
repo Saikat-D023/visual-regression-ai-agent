@@ -3,7 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "Visual Regression Patch Agent",
+  title: "Agentix",
   description: "Analyze UI screenshots against source code.",
 };
 

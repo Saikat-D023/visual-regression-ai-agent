@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { IconBrandGithub } from '@tabler/icons-react';
-import { IconBrandX } from '@tabler/icons-react';
-
+import { IconAlphabetThai, IconBrandGithub, IconBrandX } from '@tabler/icons-react';
 
 export function Footer() {
   return (
@@ -12,9 +10,7 @@ export function Footer() {
 
         {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="h-6 w-6 rounded-full bg-brand-accent flex items-center justify-center font-bold text-white text-[10px] shadow-[0_0_10px_rgba(230,59,46,0.3)]">
-            A
-          </div>
+          <IconAlphabetThai stroke={2} className="text-brand-accent" size={25} />
           <span className="font-heading font-bold text-sm text-brand-dark">Agentix</span>
         </div>
 
@@ -27,11 +23,11 @@ export function Footer() {
 
         {/* Socials */}
         <div className="flex items-center gap-4 text-brand-dark/40">
-          <a href="#" className="hover:text-brand-dark transition-colors">
+          <a href="https://x.com/dsaikat5" target="_blank" rel="noopener noreferrer" className="hover:text-brand-dark transition-colors">
             {/* <Twitter size={16} /> */}
             <IconBrandX stroke={2} />
           </a>
-          <a href="#" className="hover:text-brand-dark transition-colors">
+          <a href="https://github.com/Saikat-D023/visual-regression-ai-agent" target="_blank" rel="noopener noreferrer" className="hover:text-brand-dark transition-colors">
             {/* <Github size={16} /> */}
             <IconBrandGithub stroke={2} />
           </a>

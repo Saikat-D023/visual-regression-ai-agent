@@ -69,13 +69,27 @@ app.post(
       const codeFiles = files?.codeFiles ?? [];
       const screenshot = files?.screenshot?.[0];
 
-      if (codeFiles.length === 0 || !screenshot) {
+      // Extract text fields from multipart form data
+      const textPrompt = req.body?.textPrompt as string | undefined;
+      const apiKey = req.body?.apiKey as string | undefined;
+      const provider = req.body?.provider as string | undefined;
+      const modelName = req.body?.modelName as string | undefined;
+      const baseUrl = req.body?.baseUrl as string | undefined;
+
+      if (codeFiles.length === 0) {
         return res.status(400).json({
-          error: "Both codeFiles and screenshot uploads are required.",
+          error: "codeFiles upload is required.",
         });
       }
 
-      if (!screenshot.mimetype.startsWith("image/")) {
+      // Need at least a screenshot or text prompt
+      if (!screenshot && !textPrompt?.trim()) {
+        return res.status(400).json({
+          error: "Either a screenshot or a text description is required.",
+        });
+      }
+
+      if (screenshot && !screenshot.mimetype.startsWith("image/")) {
         return res.status(400).json({
           error: "screenshot must be an image upload.",
         });
@@ -89,13 +103,17 @@ app.post(
         });
       }
 
-      const base64Image = screenshot.buffer.toString("base64");
+      const base64Image = screenshot
+        ? screenshot.buffer.toString("base64")
+        : undefined;
 
       const result = await runVisualRegressionChain(
         codeString,
         "uploaded-folder",
         base64Image,
-        screenshot.mimetype
+        screenshot?.mimetype,
+        textPrompt?.trim(),
+        { apiKey, provider, modelName, baseUrl }
       );
 
       return res.json(result);
