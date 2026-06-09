@@ -9,7 +9,7 @@
   "dependencies": {
     "@langchain/anthropic": "^1.4.0",
     "@langchain/community": "^1.1.29",
-    "@langchain/core": "^0.3.0",
+    "@langchain/core": "^1.1.48",
     "@langchain/google-genai": "^2.1.31",
     "@langchain/openai": "^0.3.0",
     "cors": "^2.8.5",
@@ -26,5 +26,8 @@
     "@types/node": "^20.14.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
+  },
+  "overrides": {
+    "@langchain/core": "^1.1.48"
   }
 }
